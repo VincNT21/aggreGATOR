@@ -37,8 +37,8 @@ func main() {
 
 	// Store the config and dbQueries in a new instance of the state struct
 	programState := &state{
-		db: dbQueries,
-		cfg: &configData
+		db:  dbQueries,
+		cfg: &configData,
 	}
 
 	// Create a new instance of the commands structs
@@ -49,6 +49,7 @@ func main() {
 	// Register handler functions : login and register command
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
 
 	// Get the command-line arguments passed in by the user
 	args := os.Args
