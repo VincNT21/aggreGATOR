@@ -7,6 +7,7 @@ import (
 
 // Reset command : for debugging/testing only, delete everything from users table
 func handlerReset(s *state, cmd command) error {
+	// Ensure that no arguments passed
 	if len(cmd.Args) != 0 {
 		return fmt.Errorf("reset command expect no argument")
 	}

@@ -66,6 +66,33 @@ func handlerLogin(s *state, cmd command) error {
 	return nil
 }
 
+// Users command : get the list of all users in db and which is current
+func handlerUsers(s *state, cmd command) error {
+	// Ensure that no arguments passed
+	if len(cmd.Args) != 0 {
+		return fmt.Errorf("users command expect no argument")
+	}
+
+	// Get all users in db
+	users, err := s.db.GetUsers(context.Background())
+	if err != nil {
+		return fmt.Errorf("couldn't get users list. Err: %w", err)
+	}
+
+	// Get current login user
+	currentUser := s.cfg.CurrentUserName
+
+	// Print list
+	for _, user := range users {
+		if user.Name == currentUser {
+			fmt.Printf("* %v (current)\n", user.Name)
+			continue
+		}
+		fmt.Printf("* %v\n", user.Name)
+	}
+	return nil
+}
+
 func printUser(user database.User) {
 	fmt.Printf(" * ID:      %v\n", user.ID)
 	fmt.Printf(" * Name:    %v\n", user.Name)
