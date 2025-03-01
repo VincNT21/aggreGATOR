@@ -1,14 +1,20 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/VincNT21/aggreGATOR/internal/config"
+	"github.com/VincNT21/aggreGATOR/internal/database"
+
+	// Import a SQL driver but not use it in code (told by the _ in front)
+	_ "github.com/lib/pq"
 )
 
 // state struct = to give handlers access to the application state (cfg, db connection...)
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
@@ -19,9 +25,20 @@ func main() {
 		log.Fatalf("error reading config: %v", err)
 	}
 
-	// Store the config in a new instance of the state struct
+	// Open a connection to the database
+	db, err := sql.Open("postgres", configData.DbUrl)
+	if err != nil {
+		log.Fatalf("error connecting to database: %v", err)
+	}
+	defer db.Close()
+
+	// Create a new *database.queries
+	dbQueries := database.New(db)
+
+	// Store the config and dbQueries in a new instance of the state struct
 	programState := &state{
-		cfg: &configData,
+		db: dbQueries,
+		cfg: &configData
 	}
 
 	// Create a new instance of the commands structs
@@ -29,8 +46,9 @@ func main() {
 		registeredCommands: make(map[string]func(*state, command) error),
 	}
 
-	// Register a handler function for the login command
+	// Register handler functions : login and register command
 	cmds.register("login", handlerLogin)
+	cmds.register("register", handlerRegister)
 
 	// Get the command-line arguments passed in by the user
 	args := os.Args
