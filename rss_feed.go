@@ -29,7 +29,7 @@ type RSSItem struct {
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	// Init client
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 10 * time.Second,
 	}
 
 	// Make request
@@ -43,13 +43,13 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	if err != nil {
 		return &RSSFeed{}, fmt.Errorf("error with GET request: %w", err)
 	}
+	defer resp.Body.Close()
 
 	// Handle resp -> data
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return &RSSFeed{}, fmt.Errorf("error with ReadAll: %w", err)
 	}
-	defer resp.Body.Close()
 
 	// Decode data into xml
 	result := RSSFeed{}
