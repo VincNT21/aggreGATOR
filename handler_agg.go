@@ -13,7 +13,7 @@ func handlerAgg(s *state, cmd command) error {
 	}
 
 	// Get RSSfeed
-	testURL := "https://www.wagslane.dev/index.xml"
+	testURL := "https://feedfry.com/rss/11eff7941c1af1ddbf20d1719fcf69e6"
 	rssfeed, err := fetchFeed(context.Background(), testURL)
 	if err != nil {
 		return fmt.Errorf("couldn't get rssfeed from %v: %w", testURL, err)
